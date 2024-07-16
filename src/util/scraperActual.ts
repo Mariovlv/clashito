@@ -12,7 +12,8 @@ interface RowData {
   [key: string]: CellData;
 }
 
-export async function scrapeRoyaleAPI(): Promise<RowData[]> {
+export async function scrapeRoyaleAPI(id: string): Promise<RowData[]> {
+  const website = `https://royaleapi.com/clan/${id}`;
   const browser = await puppeteer.launch({
     executablePath: "/usr/bin/google-chrome",
     headless: true,
@@ -29,7 +30,8 @@ export async function scrapeRoyaleAPI(): Promise<RowData[]> {
 
   try {
     const page = await browser.newPage();
-    await page.goto("https://royaleapi.com/clan/QQGUUQ20", {
+    // the frontend never parses the ids 123456 to #123456 (putting inmediatly to / crashes)
+    await page.goto(website, {
       waitUntil: "networkidle0",
     });
     await page.setViewport({ width: 1080, height: 1024 });

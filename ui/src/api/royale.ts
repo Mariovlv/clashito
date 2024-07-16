@@ -2,12 +2,12 @@ import axios from "axios";
 
 const BASE_URL = "/api/v1";
 
-const getDonationsCurrent = () => {
-  return axios.get(BASE_URL + "/donations/current");
+const getDonationsCurrent = (id: string) => {
+  return axios.get(BASE_URL + `/donations/current/${id}`);
 };
 
-const getDonationsHistorical = () => {
-  return axios.get(BASE_URL + "/donations/historical");
+const getDonationsHistorical = (id: string) => {
+  return axios.get(BASE_URL + `/donations/historical/${id}`);
 };
 
 import { CurrentDonation, HistoricalDonation } from "../types";
@@ -16,10 +16,10 @@ interface UltraJSON extends CurrentDonation {
   historicalData: HistoricalDonation;
 }
 
-const getUltraJSON = async (): Promise<UltraJSON[]> => {
+const getUltraJSON = async (id: string): Promise<UltraJSON[]> => {
   try {
-    const donationsCurrent = await getDonationsCurrent();
-    const donationsHistorical = await getDonationsHistorical();
+    const donationsCurrent = await getDonationsCurrent(id);
+    const donationsHistorical = await getDonationsHistorical(id);
 
     // Improved function to normalize strings
     const normalizeString = (str: string) =>

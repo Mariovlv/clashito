@@ -8,11 +8,8 @@ const InputComponent: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    const processedValue = inputValue.match(/^#/)
-      ? inputValue
-      : `#${inputValue}`;
-    console.log("Processed Value:", processedValue);
-    handleInput(processedValue);
+    console.log("Processed Value:", inputValue);
+    handleInput(inputValue);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -22,25 +19,24 @@ const InputComponent: React.FC = () => {
   };
 
   const handleInput = (value: string) => {
-    // Function to be called with the processed value
-    console.log("Input received:", value);
+    console.log("Input received, starting fetching:", value);
   };
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 w-[100%]">
       <input
         type="text"
         value={inputValue}
         onChange={handleChange}
         onKeyPress={handleKeyPress}
-        className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-        placeholder="Enter a value"
+        className="px-4 py-2 border border-gray-300 border-b-2 rounded-md focus:outline-none focus:ring-2"
+        placeholder="Enter the Clan Tag"
       />
       <button
         onClick={handleSubmit}
         className="px-4 py-2 bg-gray-500 text-white rounded-md focus:outline-none focus:ring-2"
       >
-        Submit
+        Generar tabla
       </button>
     </div>
   );

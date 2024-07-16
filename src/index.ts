@@ -6,6 +6,8 @@ import {
   getWarAnalytics,
 } from "./controller/scraper";
 
+import { postClanId } from "./controller/clanId";
+
 const PORT = process.env.PORT || 3000;
 
 function main() {
@@ -13,9 +15,10 @@ function main() {
     .group("/api/v1", (app) =>
       app
         .get("/ping", ping)
-        .get("/donations/current", getAllCurrently)
-        .get("/donations/historical", getAllHistory)
-        .get("/war/historical", getWarAnalytics)
+        .get("/donations/current/:id", getAllCurrently)
+        .get("/donations/historical/:id", getAllHistory)
+        .get("/war/historical/:id", getWarAnalytics)
+        .get("/clan/:id", postClanId)
     )
     .onError(({ code, error }) => {
       console.error(`Error ${code}: ${error.message}`);

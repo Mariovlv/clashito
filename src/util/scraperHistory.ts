@@ -8,7 +8,11 @@ interface HistoryData {
   total: number;
 }
 
-export async function scrapeRoyaleAPIHistory(): Promise<HistoryData[]> {
+export async function scrapeRoyaleAPIHistory(
+  id: string
+): Promise<HistoryData[]> {
+  const website = `https://royaleapi.com/clan/${id}/history`;
+  console.log("fetching to: ", website);
   const browser = await puppeteer.launch({
     executablePath: "/usr/bin/google-chrome",
     headless: true,
@@ -25,11 +29,11 @@ export async function scrapeRoyaleAPIHistory(): Promise<HistoryData[]> {
 
   try {
     const page = await browser.newPage();
-    await page.goto("https://royaleapi.com/clan/QQGUUQ20/history", {
+    await page.goto(website, {
       waitUntil: "networkidle0",
     });
     await page.setViewport({ width: 1080, height: 1024 });
-    await page.waitForSelector("#roster", { timeout: 10000 });
+    await page.waitForSelector("#roster", { timeout: 15000 });
 
     const tableData = await page.evaluate(() => {
       const table = document.getElementById("roster");

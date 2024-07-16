@@ -5,9 +5,10 @@ interface WarAnalyticsData {
   [key: string]: string | number;
 }
 
-export async function scrapeRoyaleAPIWarAnalytics(): Promise<
-  WarAnalyticsData[]
-> {
+export async function scrapeRoyaleAPIWarAnalytics(
+  id: string
+): Promise<WarAnalyticsData[]> {
+  const website = `https://royaleapi.com/clan/${id}/war/analytics`;
   const browser = await puppeteer.launch({
     executablePath: "/usr/bin/google-chrome",
     headless: true,
@@ -25,12 +26,12 @@ export async function scrapeRoyaleAPIWarAnalytics(): Promise<
   try {
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(40000);
-    await page.goto("https://royaleapi.com/clan/QQGUUQ20/war/analytics", {
+    await page.goto(website, {
       waitUntil: "networkidle0",
     });
     await page.setViewport({ width: 1080, height: 1024 });
 
-    await page.waitForSelector("#roster", { timeout: 10000 });
+    await page.waitForSelector("#roster", { timeout: 45000 });
 
     const tableData = await page.evaluate(() => {
       const table = document.getElementById("roster");
