@@ -2,6 +2,7 @@ import puppeteer from "puppeteer";
 
 interface HistoryData {
   playerName: string;
+  playerTag: string;
   weeklyData: {
     [key: string]: number;
   };
@@ -14,7 +15,6 @@ export async function scrapeRoyaleAPIHistory(
   const website = `https://royaleapi.com/clan/${id}/history`;
   console.log("fetching to: ", website);
   const browser = await puppeteer.launch({
-    executablePath: "/usr/bin/google-chrome",
     headless: true,
     args: [
       "--no-sandbox",
@@ -26,7 +26,6 @@ export async function scrapeRoyaleAPIHistory(
       "--disable-gpu",
     ],
   });
-
   try {
     const page = await browser.newPage();
     await page.goto(website, {
@@ -42,28 +41,50 @@ export async function scrapeRoyaleAPIHistory(
       const headers = Array.from(table.querySelectorAll("thead th")).map(
         (th) => th.textContent?.trim() || ""
       );
-      const rows = Array.from(table.querySelectorAll("tbody tr"));
 
-      return {
-        headers,
-        rows: rows.map((row) =>
-          Array.from(row.querySelectorAll("td")).map((cell) =>
-            cell.innerText.trim()
-          )
-        ),
-      };
+      const rows = Array.from(table.querySelectorAll("tbody tr")).map((row) => {
+        const cells = Array.from(row.querySelectorAll("td"));
+        return cells.map((cell, index) => {
+          if (index === 0) {
+            const anchor = cell.querySelector("a");
+            if (anchor) {
+              return {
+                text: cell.innerText.trim(),
+                href: anchor.getAttribute("href") || "",
+              };
+            }
+          }
+          return cell.innerText.trim();
+        });
+      });
+
+      return { headers, rows };
     });
 
     if (tableData) {
       return tableData.rows.map((row) => {
         const rowData: HistoryData = {
-          playerName: row[0] || "",
+          playerName: "",
+          playerTag: "",
           weeklyData: {},
           total: 0,
         };
 
+        // Extract player name and tag from the first cell
+        const firstCell = row[0] as { text: string; href: string } | string;
+        if (typeof firstCell === "object" && firstCell.href) {
+          const match = firstCell.href.match(/\/player\/([^/]+)/);
+          if (match) {
+            rowData.playerTag = match[1];
+            rowData.playerName = firstCell.text;
+          }
+        } else {
+          rowData.playerName =
+            typeof firstCell === "string" ? firstCell : firstCell.text;
+        }
+
         // Sort the dates and assign to weeklyData
-        const dateFields = tableData.headers.slice(2, -1); // Skip playerName, playerTag, and Total
+        const dateFields = tableData.headers.slice(2, -1);
         dateFields
           .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
           .forEach((header, index) => {

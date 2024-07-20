@@ -1,24 +1,36 @@
-export interface CurrentDonation {
-  "#": { text: string };
-  column1: {
-    text: string;
-    username: string;
+export interface CombinedRoot extends DonationData {
+  historicalData: {
     playerTag: string;
-    role: string;
+    usernames: string[];
+    playerName: string;
+    weeklyData: {
+      week1: number;
+      week2: number;
+      week3: number;
+      week4: number;
+      week5: number;
+    };
+    total: number;
   };
-  column2: { text: string };
-  column3: { text: string };
-  column4: { text: string };
-  Role: { text: string };
-  "Last Seen": { text: string };
-  Trophies: { text: string };
-  Level: { text: string };
-  Donated: { text: string };
-  Received: { text: string };
-  column11: { text: string };
+}
+
+export interface DonationData {
+  "#": Column;
+  column1: UserColumn;
+  column2: Column;
+  column3: Column;
+  column4: Column;
+  Role: Column;
+  "Last Seen": Column;
+  Trophies: Column;
+  Level: Column;
+  Donated: Column;
+  Received: Column;
+  column11: Column;
 }
 
 export interface HistoricalDonation {
+  playerTag: string;
   playerName: string;
   weeklyData: {
     week1: number;
@@ -35,22 +47,31 @@ export interface Column {
 }
 
 export interface UserColumn extends Column {
-  username?: string;
-  playerTag?: string;
-  role?: string;
+  text: string;
+  username: string;
+  playerTag: string;
+  joinStatus: string;
+  role: string;
 }
 
-export interface DonationData {
-  "#": Column;
-  column1: UserColumn;
-  column2: Column;
-  column3: Column;
-  column4: Column;
-  Role: Column;
-  "Last Seen": Column;
-  Trophies: Column;
-  Level: Column;
-  Donated: Column;
-  Received: Column;
-  column11: Column;
+export const clanList = [
+  { clanName: "Frios Z 🥶", clanID: "Q20GLQ8R" },
+  { clanName: "Dioses Aztecas 🏳️‍🌈", clanID: "QQGUUQ20" },
+  { clanName: "Las vaqueritas🤠", clanID: "QCOOOJ9L" },
+];
+
+export interface CombinedRoot extends DonationData {
+  historicalData: {
+    playerTag: string;
+    usernames: string[];
+    playerName: string;
+    weeklyData: {
+      week1: number;
+      week2: number;
+      week3: number;
+      week4: number;
+      week5: number;
+    };
+    total: number;
+  };
 }

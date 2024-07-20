@@ -6,6 +6,7 @@ interface CellData {
   username?: string;
   playerTag?: string;
   role?: string;
+  joinStatus?: string;
 }
 
 interface RowData {
@@ -15,7 +16,6 @@ interface RowData {
 export async function scrapeRoyaleAPI(id: string): Promise<RowData[]> {
   const website = `https://royaleapi.com/clan/${id}`;
   const browser = await puppeteer.launch({
-    executablePath: "/usr/bin/google-chrome",
     headless: true,
     args: [
       "--no-sandbox",
@@ -51,9 +51,15 @@ export async function scrapeRoyaleAPI(id: string): Promise<RowData[]> {
             const linkElement = cell.querySelector("a.member_link");
             const username = linkElement?.firstChild?.textContent?.trim() || "";
             const playerTag =
-              linkElement?.querySelector(".muted")?.textContent?.trim() || "";
+              linkElement
+                ?.querySelector(".muted")
+                ?.textContent?.trim()
+                .slice(1) || "";
             const role = cell.querySelector(".meta")?.textContent?.trim() || "";
-            return { text: "", username, playerTag, role };
+            const joinStatus =
+              cell.querySelector(".join_status")?.textContent?.trim() ||
+              "Joined +10 days ago";
+            return { text: "", username, playerTag, role, joinStatus };
           }
           return { text: cell.textContent?.trim() || "" };
         });
@@ -73,6 +79,7 @@ export async function scrapeRoyaleAPI(id: string): Promise<RowData[]> {
               username: cell.username,
               playerTag: cell.playerTag,
               role: cell.role,
+              joinStatus: cell.joinStatus,
             };
           } else {
             rowData[key] = { text: cell.text };

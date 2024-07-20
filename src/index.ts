@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { ping } from "./controller/ping";
+import { staticPlugin } from "@elysiajs/static";
 import {
   getAllCurrently,
   getAllHistory,
@@ -11,7 +12,9 @@ import { postClanId } from "./controller/clanId";
 const PORT = process.env.PORT || 3000;
 
 function main() {
-  const app = new Elysia()
+  const app = new Elysia();
+
+  app
     .group("/api/v1", (app) =>
       app
         .get("/ping", ping)
@@ -20,6 +23,8 @@ function main() {
         .get("/war/historical/:id", getWarAnalytics)
         .get("/clan/:id", postClanId)
     )
+    .get("/", () => Bun.file("./public/index.html"))
+    .use(staticPlugin({ prefix: "/" }))
     .onError(({ code, error }) => {
       console.error(`Error ${code}: ${error.message}`);
       return { error: "An error occurred" };
