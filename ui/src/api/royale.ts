@@ -27,6 +27,16 @@ const getDonationsHistoricalAndCurrent = async (id: string) => {
           (h: HistoricalDonation) => h.playerTag === current.column1.playerTag
         );
 
+        if (!historical) {
+          console.warn(
+            `No historical data found for player ${current.column1.playerTag}`
+          );
+          return {
+            ...current,
+            historicalData: null,
+          };
+        }
+
         return {
           ...current,
           historicalData: {
@@ -39,6 +49,8 @@ const getDonationsHistoricalAndCurrent = async (id: string) => {
         };
       }
     );
+
+    console.log(combinedData);
 
     return combinedData;
   } catch (error) {

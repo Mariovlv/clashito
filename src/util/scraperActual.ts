@@ -16,6 +16,7 @@ interface RowData {
 export async function scrapeRoyaleAPI(id: string): Promise<RowData[]> {
   const website = `https://royaleapi.com/clan/${id}`;
   const browser = await puppeteer.launch({
+    executablePath: "/usr/bin/google-chrome",
     headless: true,
     args: [
       "--no-sandbox",

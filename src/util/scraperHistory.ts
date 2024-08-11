@@ -15,6 +15,7 @@ export async function scrapeRoyaleAPIHistory(
   const website = `https://royaleapi.com/clan/${id}/history`;
   console.log("fetching to: ", website);
   const browser = await puppeteer.launch({
+    executablePath: "/usr/bin/google-chrome",
     headless: true,
     args: [
       "--no-sandbox",
